@@ -1,0 +1,6 @@
+[submodule "zookeeper-example"]
+	path = zookeeper-example
+	url = git://github.com/learn-middleware/zookeeper-example.git
+[submodule "zookeeper_book"]
+	path = zookeeper_book
+	url = git://github.com/learn-middleware/zookeeper_book.git
