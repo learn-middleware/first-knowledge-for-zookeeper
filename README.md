@@ -68,9 +68,9 @@ https://www.cnblogs.com/felixzh/p/5869212.html
 
 ### 集群角色
 
-1. Leader：为客户端提供读和写服务
-2. Follower: 提供读服务，所有写服务都需要转交给 Leader 角色，参与选举
-3. Observer：提供读服务，不参与选举过程，一般是为了增强 zk 集群的读请求并发能力
+- Leader：为客户端提供读和写服务
+- Follower: 提供读服务，所有写服务都需要转交给 Leader 角色，参与选举
+- Observer：提供读服务，不参与选举过程，一般是为了增强 zk 集群的读请求并发能力
 
 ### 会话
 
@@ -79,6 +79,34 @@ https://www.cnblogs.com/felixzh/p/5869212.html
 - 接收来自服务端的 watch 事件通知
 - 可以设置超时时间
 
+### 数据节点(Znode)
+
+- 不是机器的意思
+– Zk 树形结构中的数据节点，用于存储数据
+– 持久节点：一旦创建，除非主动调用删除操作，否则一直存储在 zk 上
+– 临时节点：与客户端的会话绑定，一旦客户端会话失效，这个客户端创建的所有临时节点都会被移除
+– SEQUENTIAL Znode：创建节点时，如果设置属性SEQUENTIAL，则会自动在节点后面追加一个整型数数字
+
+### 版本
+
+- Version：当前 Znode 的版本
+- Cversion：当前 Znode 的子节点的版本
+- Aversion: 当前 Znode 的 ACL(访问控制)版本
+
+### Watcher
+
+- 作用于 Znode 节点上
+- 多种事件通知：数据更新，子节点状态等
+
+### ACL
+
+- Access Control Lists
+- 类似于 linux/unix 的权限控制
+- CREATE 创建子节点的权限
+- READ: 获取节点数据和子节点列表的权限
+- WRITE：更新节点数据的权限
+- DELETE：删除子节点的权限
+- ADMIN：设置节点 ACL 的权限
 
 
 
