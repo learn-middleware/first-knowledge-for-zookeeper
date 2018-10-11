@@ -143,6 +143,13 @@ https://www.cnblogs.com/felixzh/p/5869212.html
 zk 中引入了 watcher 机制来实现了发布/订阅功能，能够让多个订阅者同时监听某一个主题对象，当这个主题对象自身状态变化时，会通知所有订阅者。
 ```
 
+### Watcher 组成
+
+- 客户端
+- 客户端  watchManager
+- zk 服务器
+
+![watch组成](images/1.png)
 
 ## LICENSE
 
