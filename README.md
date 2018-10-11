@@ -108,19 +108,31 @@ https://www.cnblogs.com/felixzh/p/5869212.html
 - DELETE：删除子节点的权限
 - ADMIN：设置节点 ACL 的权限
 
+## 基础进阶
+
+### 数据节点(Znode)
+
+- zk 树形结构中的数据节点，用于存储数据
+- 持久节点(Persistent)：一旦创建，除非主动调用删除操作，否则一直存储在 zk 上
+- 临时节点(ephemeral)：与客户端的会话绑定，一旦客户端会话失效，这个客户端创建的所有临时节点都会被移除(`create -e`)
+- Persistent_sequential：创建子节点时，如果设置属性 sequential,则会自动在节点后面追加一个整型数字，上限是整型的最大值
 
 
+### 顺序节点
+
+### 带前缀
+
+- 创建顺序节点 1，节点数据为 321 `create -s /zk-test/seq 321`
+- 创建顺序节点 2，节点数据内容为 322 `create -s /zk-test/seq 322`
+- 查看所有创建的顺序子节点 `ls /zk-test`
+
+### 不带前缀
+
+- 创建顺序节点 1，节点数据为 321 `create -s /zk-test/ 321`
+- 创建顺序节点 2，节点数据内容为 322 `create -s /zk-test/ 322`
+- 查看所有创建的顺序子节点 `ls /zk-test`
 
 
+## LICENSE
 
-
-
-
-
-
-
-
-
-
-
-
+![](LICENSE.png)
