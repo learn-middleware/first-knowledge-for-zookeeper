@@ -151,6 +151,61 @@ zk 中引入了 watcher 机制来实现了发布/订阅功能，能够让多个�
 
 ![watch组成](images/1.png)
 
+### Watcher 机制
+
+- 客户端向 zk 服务器注册 watcher 的同时，会将 watcher 对象存储在客户端的 watchManager
+- zk 服务器触发 watch 事件后，会向客户端发送通知，客户端线程从 watchManager 中调起 watcher 执行
+
+### Watcher 接口
+
+- `public void process(WatchedEvent watchedEvent) {`
+
+### Watcher 事件
+
+- 通知状态：`org.apache.zookeeper.Watcher.Event.KeeperState`
+- 事件类型：`org.apache.zookeeper.Watcher.Event.EventType`
+
+<table>
+<head>
+<tr>
+    <td>keeperState</td>
+    <td>EventType</td>
+    <td>触发条件</td>
+    <td>说明</td>
+</tr>
+</head>
+<tbody>
+<tr>
+    <td rowspan="5"> SyncConnected 
+    <td>None(-1)</td>
+    <td>客户端与服务器成功建立会话</td>
+    <td rowspan="5">此时客户端和服务器处于连接状态</td>
+</tr>
+
+<tr>
+<td>NodeCreated(1)</td>
+<td>Watcher 监听的对应数据节点被创建</td>
+</tr>
+
+<tr>
+<td>NodeDeleted(2)</td>
+<td>Watcher 监听的对应数据节点被删除</td>
+</tr>
+
+<tr>
+<td>NodeDataChanged(3)</td>
+<td>数据节点的数据内容发生变更</td>
+</tr>
+
+<tr>
+<td>NodeChildrenChanged(4)</td>
+<td>被监听的数据节点的字节点列表发生变更</td>
+<tr>
+
+
+</tbody>
+</table>
+
 ## LICENSE
 
 ![](LICENSE.png)
