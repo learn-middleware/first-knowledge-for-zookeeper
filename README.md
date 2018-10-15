@@ -202,9 +202,78 @@ zk 中引入了 watcher 机制来实现了发布/订阅功能，能够让多个�
 <td>被监听的数据节点的字节点列表发生变更</td>
 <tr>
 
+<tr>
+<td>Disconnected(0)</td>
+<td>None(-1)</td>
+<td>客户端与 zk 服务器端口连接</td>
+<td>此时客户端和服务器处于断开连接状态</td>
+</tr>
+
+<tr>
+<td>Expired(-112)</td>
+<td>None(-1)</td>
+<td>会话超时</td>
+<td>此时客户端会话失效，通常会收到 SessionExpiredException 异常</td>
+</tr>
+
+<tr>
+<td>AuthFailed(4)</td>
+<td>None(-1)</td>
+<td>1.使用错误的 scheme 进行权限检查</br>2.SASL 权限检查失败</td>
+<td>通常会收到 AuthFailedException 异常</td>
+</tr>
+
+<tr>
+<td>Unknown(-1)</td>
+<td></td>
+<td></td>
+<td rowspan="2">从3.1.0版本开始已经废弃</td>
+</tr>
+
+<tr>
+<td>NoSyncConnected</td>
+<td></td>
+<td></td>
+</tr>
 
 </tbody>
 </table>
+
+#### NodeDataChanged 事件
+
+- 无论节点数据发生变化还是数据版本发生变化都会触发
+- 即使被更新数据与新数据一样，数据版本都会发生变化
+
+#### NodeChildrenChanged
+
+- 新增节点或者删除节点
+
+#### AuthFailed
+
+- 重点不是客户端会话没有权限而是授权失败
+
+> 客户端只能收到相关事件通知，但是并不能获取到对应数据节点的原始数据内容以及变更后的新数据内容；因此，如果业务需要知道变更前的数据或者变更后的新数据，需要业务保存变更前的数据和调用接口获取新的数据
+
+#### 创建 zk 客户端对象实例时注册
+
+- ZooKeeper(String connectString, int sessionTimeout, Watcher watcher)
+- ZooKeeper(String connectString, int sessionTimeout, Watcher watcher, boolean canBeReadOnly)
+- ZooKeeper(String connectString, int sessionTimeout, Watcher watcher, long sessionId, byte[] sessionPasswd)
+- ZooKeeper(String connectString, int sessionTimeout, Watcher watcher, long sessionId, byte[] sessionPasswd, boolean canBeReadOnly)
+
+> 通过这种方式注入的 watcher 将会作为整个 zk 会话期间的默认 watcher，会一直被保存在客户端 ZKWatchManager  的 defaultWatcher 中，如果有其他设置，则这个 watcher 会被覆盖
+
+#### 其他注册 api
+
+- getChildren(String path, Watcher watcher)
+- getChildren(String path, boolean watch)
+ >> Boolean watch 表示是否使用上下文中默认的 watcher，即创建 zk 实例时设置的 watcher
+- getData(String path, boolean watch, Stat stat)
+ >> Boolean watch 表示是否使用上下文中默认的 watcher，即创建 zk 实例时设置的 watcher
+- getData(String path, Watcher watcher, AsyncCallback.DataCallback cb, Object ctx)
+- exists(String path, boolean watch)
+ >> Boolean watch 表示是否使用上下文中默认的 watcher，即创建 zk 实例时设置的 watcher
+- exists(String path, Watcher watcher)
 
 ## LICENSE
 
