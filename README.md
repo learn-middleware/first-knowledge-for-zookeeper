@@ -275,6 +275,14 @@ zk 中引入了 watcher 机制来实现了发布/订阅功能，能够让多个�
  >> Boolean watch 表示是否使用上下文中默认的 watcher，即创建 zk 实例时设置的 watcher
 - exists(String path, Watcher watcher)
 
+```
+Watcher 设置后，一旦触发一次即会失效，如果需要一直监听，就需要再注册
+```
+
+### 客户端 watcher 注册流程
+
+![](images/2.png)
+
 ## LICENSE
 
 ![](LICENSE.png)
