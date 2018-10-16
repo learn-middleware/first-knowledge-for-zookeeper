@@ -283,6 +283,8 @@ Watcher 设置后，一旦触发一次即会失效，如果需要一直监听，
 
 ![](images/2.png)
 
+![](images/3.png)
+
 ## LICENSE
 
 ![](LICENSE.png)
