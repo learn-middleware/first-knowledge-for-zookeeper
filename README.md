@@ -285,6 +285,38 @@ Watcher 设置后，一旦触发一次即会失效，如果需要一直监听，
 
 ![](images/3.png)
 
+### ACL
+
+- `getAcl` 查看 `acl` 信息
+
+```shell
+ls /
+[zz, zk]
+getAcl /zz
+'world,'anyone
+cdrwa
+```
+
+- 说明
+
+> `anyone` 表示任何用户
+
+权限|说明
+--- | ---
+CREATE(r)：|创建子节点的权限 
+DELETE(d)：|删除节点的权限 
+READ(r)：  |读取节点数据的权限 
+WRITE(w)： |修改节点数据的权限 
+ADMIN(a)： |设置子节点权限的权限
+
+- 设置权限
+
+```shell
+setAcl /zz world:anyone:ca
+get /zz
+Authentication is not valid : /zz
+```
+
 ## LICENSE
 
 ![](LICENSE.png)
