@@ -317,12 +317,12 @@ ADMIN(a)： |设置子节点权限的权限
 - `digest`：是授权方式 
 - `username:BASE64(SHA1(password))`：是 id 部分 
 - `cdrwa`：权限部份 
-- 用户名+密码授权访问方式，也是常用的一种授权策略。id部份是用户名和密码做sha1加密再做BASE64加密后的组合，比如设置一个节点的用户名为yangxin，密码为123456，则表示方式为：yangxin:BASE64(SHA1(123456)) ⇒ yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=。密码加密需要用到zk的一个工具类来生成，如下所示：
+- 用户名+密码授权访问方式，也是常用的一种授权策略。id 部份是用户名和密码做 sha1 加密再做 BASE64 加密后的组合，比如设置一个节点的用户名为 admin，密码为 123456，则表示方式为：admin:BASE64(SHA1(123456)) ⇒ admin:0uek/hZ/V9fgiM35b0Z2226acMQ=。密码加密需要用到 zk 的一个工具类来生成，如下所示：
 
 ```
-shell> java -Djava.ext.dirs=/usr/local/zookeeper/lib -cp /usr/local/zookeeper/zookeeper-3.4.9.jar org.apache.zookeeper.server.auth.DigestAuthenticationProvider yangxin:123456
+shell> java -Djava.ext.dirs=/usr/local/zookeeper/lib -cp /usr/local/zookeeper/zookeeper-3.4.9.jar org.apache.zookeeper.server.auth.DigestAuthenticationProvider admin:123456
 
-yangxin:123456->yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=
+admin:123456->admin:0uek/hZ/V9fgiM35b0Z2226acMQ=
 ```
 
 ```
@@ -330,7 +330,7 @@ yangxin:123456->yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=
 shell> create /node_05 data
 Created /node_05
 ## 设置权限
-shell> setAcl /node_05 digest:yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=:cdrwa
+shell> setAcl /node_05 digest:admin:0uek/hZ/V9fgiM35b0Z2226acMQ=:cdrwa
 cZxid = 0x8e
 ctime = Mon Nov 14 21:38:52 CST 2016
 mZxid = 0x8e
@@ -344,7 +344,7 @@ dataLength = 3
 numChildren = 0
 ## 获取节点刚刚设置的权限
 shell> getAcl /node_05
-'digest,'yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=
+'digest,'admin:0uek/hZ/V9fgiM35b0Z2226acMQ=
 : cdrwa
 
 ## 没有授权，创建节点失败
@@ -352,7 +352,7 @@ shell> create /node_05/node_05_01 data
 Authentication is not valid : /node_05/node_05_01
 
 ## 添加授权信息
-shell> addauth digest yangxin:123456
+shell> addauth digest admin:123456
 
 ## 添加授权信息后，就可以正常操作了
 shell> create /node_05/node_05_01 data
@@ -391,7 +391,7 @@ id 是验证模式，不同的 scheme，id 的值也不一样。scheme 为 diges
 
 ```shell
 ## 创建/node_8节点，acl为cd（只能创建和删除子节点）
-shell> create /node_08 data digest:yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=:cd
+shell> create /node_08 data digest:admin:0uek/hZ/V9fgiM35b0Z2226acMQ=:cd
 Created /node_08
 
 ## 没有WRITE的权限，修改/node_8节点的数据失败
