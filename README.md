@@ -309,13 +309,118 @@ READ(r)：  |读取节点数据的权限
 WRITE(w)： |修改节点数据的权限 
 ADMIN(a)： |设置子节点权限的权限
 
-- 设置权限
+#### scheme
+
+##### digest
+
+- 语法：`digest:username:BASE64(SHA1(password)):cdrwa` 
+- `digest`：是授权方式 
+- `username:BASE64(SHA1(password))`：是 id 部分 
+- `cdrwa`：权限部份 
+- 用户名+密码授权访问方式，也是常用的一种授权策略。id部份是用户名和密码做sha1加密再做BASE64加密后的组合，比如设置一个节点的用户名为yangxin，密码为123456，则表示方式为：yangxin:BASE64(SHA1(123456)) ⇒ yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=。密码加密需要用到zk的一个工具类来生成，如下所示：
+
+```
+shell> java -Djava.ext.dirs=/usr/local/zookeeper/lib -cp /usr/local/zookeeper/zookeeper-3.4.9.jar org.apache.zookeeper.server.auth.DigestAuthenticationProvider yangxin:123456
+
+yangxin:123456->yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=
+```
+
+```
+## 创建节点/node_05
+shell> create /node_05 data
+Created /node_05
+## 设置权限
+shell> setAcl /node_05 digest:yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=:cdrwa
+cZxid = 0x8e
+ctime = Mon Nov 14 21:38:52 CST 2016
+mZxid = 0x8e
+mtime = Mon Nov 14 21:38:52 CST 2016
+pZxid = 0x8e
+cversion = 0
+dataVersion = 0
+aclVersion = 1
+ephemeralOwner = 0x0
+dataLength = 3
+numChildren = 0
+## 获取节点刚刚设置的权限
+shell> getAcl /node_05
+'digest,'yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=
+: cdrwa
+
+## 没有授权，创建节点失败
+shell> create /node_05/node_05_01 data
+Authentication is not valid : /node_05/node_05_01
+
+## 添加授权信息
+shell> addauth digest yangxin:123456
+
+## 添加授权信息后，就可以正常操作了
+shell> create /node_05/node_05_01 data
+Created /node_05/node_05_01
+```
+
+##### ip
+
+- 基于客户端 IP 地址校验，限制只允许指定的客户端能操作 znode。 
+- 比如，设置某个节点只允许 IP 为 `192.168.1.100` 的客户端能读写该写节点的数据：`ip:192.168.1.100:rw`
 
 ```shell
-setAcl /zz world:anyone:ca
-get /zz
-Authentication is not valid : /zz
+setAcl /node_08 ip:192.168.1.100:rw
 ```
+
+##### world
+
+- 语法：`world:anyone:cdrwa` 
+- 创建节点默认的 scheme，所有人都可以访问。如下所示：
+
+```shell
+shell> create /node_06 data
+Created /node_06
+shell> getAcl /node_06
+'world,'anyone
+: cdrwa
+```
+
+#### id
+
+id 是验证模式，不同的 scheme，id 的值也不一样。scheme 为 digest时，id 的值为：`username:BASE64(SHA1(password))`，scheme 为 ip 时，id 的值为客户端的 ip 地址。scheme 为world 时，id 的值为 anyone。
+
+#### permission
+
+- 在介绍 scheme 的时候，提到了 acl 的权限，如：`digest:username:BASE64(SHA1(password)):cdrwa` 中的 `cdrwa`即是 permission。 
+
+```shell
+## 创建/node_8节点，acl为cd（只能创建和删除子节点）
+shell> create /node_08 data digest:yangxin:ACFm5rWnnKn9K9RN/Oc8qEYGYDs=:cd
+Created /node_08
+
+## 没有WRITE的权限，修改/node_8节点的数据失败
+shell> set /node_8 update_data
+Authentication is not valid : /node_08
+
+## 没有READ的权限，读取子节点数据及查询子节点列表失败
+shell> get /node_8
+Authentication is not valid : /node_08 
+shell> ls /node_8
+Authentication is not valid : /node_08
+
+## 没有ADMIN权限，设置节点权限失败
+shell> setAcl /node_08 ip:192.168.1.100:cdrwa
+Authentication is not valid : /node_08
+
+## 具备WRITE权限，可以创建节点
+shell> create /node_08/node_08_01 abc
+Created /node_08/node_08_01
+
+## 具备DELETE权限，可以删除子节点
+shell> delete /node_08/node_08_01
+```
+
+> 注意：`cd` 权限用于控制子节点，`rwa` 权限用于控制节点本身
+
+## REFERENCE
+
+- [分布式服务管理框架-Zookeeper节点ACL](https://blog.csdn.net/xyang81/article/details/53147894)
 
 ## LICENSE
 
